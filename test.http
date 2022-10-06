@@ -1,0 +1,52 @@
+
+
+### LOGIN LOCAL EMAIL
+POST http://localhost:5000/api/login
+content-type: application/json
+
+{
+    "email": "ponomarykov@gmail.com", 
+    "password": "12345678"
+}
+
+### LOGIN LOCAL ID
+POST http://localhost:5000/api/login
+content-type: application/json
+
+{
+    "id": "pizda",
+    "email": "ponomarykov@gmail.com"
+}
+
+### LOGIN INTERNET
+POST https://pure-anchorage-45021.herokuapp.com/api/login
+content-type: application/json
+
+{
+    "id":"pizda"
+}
+
+###
+POST http://localhost:5000/api/register
+content-type: application/json
+
+{
+    "email": "ponomarykov@gmail.com", 
+    "password": "12345678"
+}
+
+###
+POST http://localhost:5000/api/register
+content-type: application/json
+
+{
+    "id":"pizda"
+}
+
+###
+POST https://pure-anchorage-45021.herokuapp.com/api/register
+content-type: application/json
+
+{
+    "id": "pizda2"
+}
