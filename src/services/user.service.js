@@ -1,63 +1,33 @@
-import User from "../models/User.js";
-import jwt from "jsonwebtoken";
+import { user } from "../models/index.js";
+import bcrypt from "bcryptjs";
 
-const generateAccessToken = (email, id) => {
-  const nameSpace = "https://hasura.io/jwt/claims";
-  const payload = {
-    email,
-    id,
-    [nameSpace]: {
-      "x-hasura-allowed-roles": ["editor", "user", "mod"],
-      "x-hasura-default-role": "user",
-      "x-hasura-user-id": id,
-    },
-  };
-
-  return jwt.sign(payload, process.env.JWT_SECRET, {
-    expiresIn: +process.env.JWT_EXP || '1h',
-  });
+const encryptPassword = (password) => {
+  const salt = bcrypt.genSaltSync(10);
+  return bcrypt.hashSync(password, salt);
 };
 
-const getAll = async () => {
-  try {
-    const users = await User.findAll();
-    return users.map((item) => item.dataValues);
-  } catch (err) {
-    console.error(err);
-  }
+const validatePassword = (pass1, pass2) => {
+  return bcrypt.compareSync(pass1, pass2);
 };
 
 const addOne = async ({ email, password, id }) => {
-  try {
-    const user = await User.create({ email, password, id });
-    return user;
-  } catch (err) {
-    console.error(err);
-  }
+  return await user.create({ email, password, id });
 };
 
 const findByEmail = async (email) => {
-  try {
-    const result = await User.findAll({ where: { email } });
-    return result[0];
-  } catch (err) {
-    console.error("user.service.findUserByEmail: ", err);
-  }
+  const [result] = await user.findAll({ where: { email } });
+  return result;
 };
 
 const findById = async (id) => {
-  try {
-    const result = await User.findAll({ where: { id: id } });
-    return result[0];
-  } catch (err) {
-    console.error("user.cervice.findUserById: ", err);
-  }
+  const [result] = await user.findAll({ where: { id: id } });
+  return result;
 };
 
 export default {
-  generateAccessToken,
-  getAll,
   addOne,
   findByEmail,
   findById,
+  encryptPassword,
+  validatePassword,
 };
