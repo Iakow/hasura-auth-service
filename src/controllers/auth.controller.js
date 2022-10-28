@@ -14,7 +14,10 @@ const register = async (req, res) => {
 
       const newUser = await userService.addOne({ id });
       const refreshToken = await tokenService.createRefreshToken(newUser.id);
-      const accessToken = tokenService.generateAccessToken(newUser.id);
+      const accessToken = tokenService.generateAccessToken(
+        newUser.email,
+        newUser.id
+      );
       return res.json({ accessToken, refreshToken });
     }
 
@@ -30,11 +33,14 @@ const register = async (req, res) => {
       password: hashPassword,
     });
     const refreshToken = await tokenService.createRefreshToken(newUser.id);
-    const accessToken = tokenService.generateAccessToken(newUser.email, newUser.id);
+    const accessToken = tokenService.generateAccessToken(
+      newUser.email,
+      newUser.id
+    );
     return res.json({ accessToken, refreshToken });
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ message: err.message || 'Server error'});
+    console.log(err);
+    res.status(500).json({ message: err.message || "Server error" });
   }
 };
 
@@ -75,8 +81,8 @@ const login = async (req, res) => {
 
     return res.send({ accessToken, refreshToken });
   } catch (err) {
-    console.log(err)
-    res.status(500).send({ message: err.message || 'Server error'});
+    console.log(err);
+    res.status(500).send({ message: err.message || "Server error" });
   }
 };
 
@@ -96,9 +102,7 @@ export const refresh = async (req, res) => {
     const isExpired = tokenService.verifyExpiration(existingRToken);
     if (isExpired) {
       await existingRToken.destroy();
-      return res
-        .status(403)
-        .json({ message: "Invalid token" });
+      return res.status(403).json({ message: "Invalid token" });
     }
 
     const user = await existingRToken.getUser();
@@ -117,8 +121,8 @@ export const refresh = async (req, res) => {
       accessToken: newAccessToken,
     });
   } catch (err) {
-    console.log(err)
-    res.status(500).send({ message: err.message || 'Server error'});
+    console.log(err);
+    res.status(500).send({ message: err.message || "Server error" });
   }
 };
 
