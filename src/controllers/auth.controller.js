@@ -73,7 +73,7 @@ const login = async (req, res) => {
       }
     }
 
-    const refreshToken = await tokenService.createRefreshToken(existingUser.email, existingUser.id);
+    const refreshToken = await tokenService.createRefreshToken(existingUser.id);
     const accessToken = tokenService.generateAccessToken(
       existingUser.email,
       existingUser.id
@@ -96,19 +96,19 @@ export const refresh = async (req, res) => {
   try {
     const existingRToken = await tokenService.getRefreshToken(requestToken);
     if (!existingRToken) {
-      return res.status(403).json({ message: "Invalid token" });
+      return res.status(403).json({ message: "Unknown token" });
     }
 
     const isExpired = tokenService.verifyExpiration(existingRToken);
     if (isExpired) {
       await existingRToken.destroy();
-      return res.status(403).json({ message: "Invalid token" });
+      return res.status(403).json({ message: "Expired token" });
     }
 
     const user = await existingRToken.getUser();
     if (!user) {
       await existingRToken.destroy();
-      return res.status(403).json({ message: "Invalid token" });
+      return res.status(403).json({ message: "No such user" });
     }
 
     const newAccessToken = tokenService.generateAccessToken(
