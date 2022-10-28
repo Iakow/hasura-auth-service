@@ -73,7 +73,7 @@ const login = async (req, res) => {
       }
     }
 
-    const refreshToken = await tokenService.createRefreshToken(existingUser.id);
+    const refreshToken = await tokenService.createRefreshToken(existingUser.email, existingUser.id);
     const accessToken = tokenService.generateAccessToken(
       existingUser.email,
       existingUser.id
